@@ -8,7 +8,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { UserType } from '../entities/user.entity';
+import { UserType } from '../../types/users.types';
 
 export class CreateUserDto {
   @ApiProperty({

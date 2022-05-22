@@ -15,6 +15,7 @@ export class JwtAdminStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
   }
 
   validate(payload: any) {
-    return payload?.role === 'admin' ? payload : null;
+    console.log(payload);
+    return payload?.type === 'admin' ? payload : null;
   }
 }

@@ -1,19 +1,15 @@
 import {
   Column,
-  Model,
   Table,
   DataType,
   BeforeCreate,
   HasMany,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
+
 import { Post } from '../../posts/entities/post.entity';
 import { BaseModel } from '../../common/sequelize/base-model';
-
-export enum UserType {
-  ADMIN = 'admin',
-  BLOGGER = 'blogger',
-}
+import { UserType } from '../../types/users.types';
 
 @Table
 export class User extends BaseModel<User> {

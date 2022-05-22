@@ -8,36 +8,38 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetByIdDto } from '../common/dto/get-by-id.dto';
+import { User } from './entities/user.entity';
 
 @ApiTags('Users')
 @UseGuards(AdminGuard)
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: 'Create a user' })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
 
   @ApiOperation({ summary: 'Get all users' })
   @Get()
-  findAll() {
+  findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @ApiOperation({ summary: 'Get a user by id' })
   @Get(':id')
-  async findOne(@Param() params: GetByIdDto) {
-    return await this.usersService.findOne(params.id);
+  findOne(@Param() params: GetByIdDto): Promise<User> {
+    return this.usersService.findOne(params.id);
   }
 
   @ApiOperation({ summary: 'Update a user by id' })

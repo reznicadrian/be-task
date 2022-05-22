@@ -12,7 +12,7 @@ export class PostsService {
   constructor(@InjectModel(Post) private postModel: typeof Post) {}
 
   findAllPublic(): Promise<Post[]> {
-    return this.postModel.findAll({ where: { isHidden: true } });
+    return this.postModel.findAll<Post>({ where: { isHidden: true } });
   }
 
   findOnePublic(id: number): Promise<Post> {

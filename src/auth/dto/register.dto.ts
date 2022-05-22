@@ -1,6 +1,7 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { LoginDto } from './login.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
+
+import { LoginDto } from './login.dto';
 
 export class RegisterDto extends PartialType(LoginDto) {
   @ApiProperty({

@@ -6,7 +6,6 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { UserType } from '../../users/entities/user.entity';
 
 export class CreatePostDto {
   @ApiProperty({

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { User, UserType } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,7 +19,6 @@ export class UsersService {
   register(createUserDto: RegisterDto): Promise<User> {
     return this.userModel.create<User>({
       ...createUserDto,
-      type: UserType.BLOGGER,
     });
   }
 
@@ -27,16 +26,16 @@ export class UsersService {
     return this.userModel.findAll<User>();
   }
 
-  async findOne(id: number): Promise<User> {
-    return await this.userModel.findOne({
+  findOne(id: number): Promise<User> {
+    return this.userModel.findOne<User>({
       where: {
         id,
       },
     });
   }
 
-  async findOneByEmail(email: string): Promise<User> {
-    return await this.userModel.findOne({
+  findOneByEmail(email: string): Promise<User> {
+    return this.userModel.findOne<User>({
       where: {
         email,
       },
@@ -44,7 +43,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const [, [updatedUser]] = await this.userModel.update(
+    const [, [updatedUser]] = await this.userModel.update<User>(
       { ...updateUserDto },
       { where: { id }, returning: true },
     );

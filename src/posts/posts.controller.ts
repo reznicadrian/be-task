@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -44,21 +45,21 @@ export class PostsController {
     return this.postsService.findOne(params.id);
   }
 
-  @ApiOperation({ summary: 'Toggle one post by id' })
+  @ApiOperation({ summary: 'Toggle one post by id (Admin, Blogger)' })
   @UseGuards(MyPostGuard)
-  @Patch(':id')
+  @Put(':id')
   togglePost(@Param() params: GetByIdDto) {
     return this.postsService.toggleHidden(params.id);
   }
 
-  @ApiOperation({ summary: 'Update one post by id' })
+  @ApiOperation({ summary: 'Update one post by id (Admin, Blogger)' })
   @UseGuards(MyPostGuard)
   @Patch(':id')
   update(@Param() params: GetByIdDto, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(params.id, updatePostDto);
   }
 
-  @ApiOperation({ summary: 'Delete one post by id' })
+  @ApiOperation({ summary: 'Delete one post by id (Admin, Blogger)' })
   @UseGuards(MyPostGuard)
   @Delete(':id')
   remove(@Param() params: GetByIdDto) {
