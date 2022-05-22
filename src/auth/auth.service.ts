@@ -22,12 +22,9 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<string> {
     const user = await this.userService.findOneByEmail(loginDto.email);
-    const me = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      type: user.type,
-    };
+
+    const me = AuthService.buildUserRes(user);
+
     if (!user) throw new HttpException('User does not exist', 404);
 
     const isValid = await bcrypt.compare(loginDto.password, user.password);
@@ -41,9 +38,18 @@ export class AuthService {
 
   async register(registerDto: RegisterDto): Promise<string> {
     const user = await this.userService.register(registerDto);
-
-    const payload = instanceToPlain(user);
+    const me = AuthService.buildUserRes(user);
+    const payload = instanceToPlain(me);
 
     return this.jwtService.sign({ ...payload }, this.configService.jwtConfig);
+  }
+
+  private static buildUserRes(user) {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      type: user.type,
+    };
   }
 }

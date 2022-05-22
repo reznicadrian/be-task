@@ -5,10 +5,19 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 import { User } from '../users/entities/user.entity';
+import { literal } from 'sequelize';
 
 @Injectable()
 export class PostsService {
   constructor(@InjectModel(Post) private postModel: typeof Post) {}
+
+  findAllPublic(): Promise<Post[]> {
+    return this.postModel.findAll({ where: { isHidden: true } });
+  }
+
+  findOnePublic(id: number): Promise<Post> {
+    return this.postModel.findOne({ where: { id, isHidden: true } });
+  }
 
   create(createPostDto: CreatePostDto, me: User): Promise<Post> {
     return this.postModel.create<Post>({
@@ -21,29 +30,32 @@ export class PostsService {
     return this.postModel.findAll<Post>({ where: { userId: me.id } });
   }
 
-  findOne(id: number, me: User) {
+  findOne(id: number): Promise<Post> {
     return this.postModel.findOne({
       where: {
-        userId: me.id,
         id,
       },
     });
   }
 
-  async update(
-    id: number,
-    updatePostDto: UpdatePostDto,
-    me: User,
-  ): Promise<Post> {
+  async toggleHidden(id: number): Promise<Post> {
+    const [, [updatedPost]] = await this.postModel.update<Post>(
+      { isHidden: literal('NOT is_hidden') },
+      { where: { id }, returning: true },
+    );
+    return updatedPost;
+  }
+
+  async update(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
     const [, [updatedPost]] = await this.postModel.update<Post>(
       { ...updatePostDto },
-      { where: { userId: me.id, id }, returning: true },
+      { where: { id }, returning: true },
     );
 
     return updatedPost;
   }
 
-  remove(id: number, me: User) {
-    return this.postModel.destroy<Post>({ where: { userId: me.id, id } });
+  remove(id: number) {
+    return this.postModel.destroy<Post>({ where: { id } });
   }
 }

@@ -17,6 +17,7 @@ import { GetByIdDto } from '../common/dto/get-by-id.dto';
 import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
 import { Me } from '../common/decorators/me.decorator';
 import { User } from '../users/entities/user.entity';
+import { MyPostGuard } from '../auth/guards/my-post.guard';
 
 @ApiTags('Posts')
 @UseGuards(AuthenticatedGuard)
@@ -39,23 +40,28 @@ export class PostsController {
 
   @ApiOperation({ summary: 'Get one post by id' })
   @Get(':id')
-  findOne(@Param() params: GetByIdDto, @Me() me: User) {
-    return this.postsService.findOne(params.id, me);
+  findOne(@Param() params: GetByIdDto) {
+    return this.postsService.findOne(params.id);
+  }
+
+  @ApiOperation({ summary: 'Toggle one post by id' })
+  @UseGuards(MyPostGuard)
+  @Patch(':id')
+  togglePost(@Param() params: GetByIdDto) {
+    return this.postsService.toggleHidden(params.id);
   }
 
   @ApiOperation({ summary: 'Update one post by id' })
+  @UseGuards(MyPostGuard)
   @Patch(':id')
-  update(
-    @Param() params: GetByIdDto,
-    @Body() updatePostDto: UpdatePostDto,
-    @Me() me: User,
-  ) {
-    return this.postsService.update(params.id, updatePostDto, me);
+  update(@Param() params: GetByIdDto, @Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.update(params.id, updatePostDto);
   }
 
   @ApiOperation({ summary: 'Delete one post by id' })
+  @UseGuards(MyPostGuard)
   @Delete(':id')
-  remove(@Param() params: GetByIdDto, @Me() me: User) {
-    return this.postsService.remove(params.id, me);
+  remove(@Param() params: GetByIdDto) {
+    return this.postsService.remove(params.id);
   }
 }
