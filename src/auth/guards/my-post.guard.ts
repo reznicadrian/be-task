@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 import { PostsService } from '../../posts/posts.service';
 import { Reflector } from '@nestjs/core';
-import { UserType } from '../../users/entities/user.entity';
+import { UserType } from '../../types/users.types';
 
 @Injectable()
 export class MyPostGuard implements CanActivate {
