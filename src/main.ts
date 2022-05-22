@@ -3,11 +3,29 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { ConfigService } from './config/config.service';
+import { HttpException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config: ConfigService = app.get(ConfigService);
   const port: number = +config.get('APP_PORT');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      exceptionFactory: (errors) => {
+        const error = {
+          message: 'Validation errors',
+          statusCode: 422,
+          validationErrors: errors.map((err) => ({
+            field: err.property,
+            constraints: err.constraints,
+          })),
+        };
+
+        throw new HttpException(error, 404);
+      },
+    }),
+  );
   app.setGlobalPrefix('api');
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Blog')
