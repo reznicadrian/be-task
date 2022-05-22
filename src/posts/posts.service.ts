@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Post } from './entities/post.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class PostsService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(@InjectModel(Post) private postModel: typeof Post) {}
+
+  create(createPostDto: CreatePostDto, me: User): Promise<Post> {
+    return this.postModel.create<Post>({
+      ...createPostDto,
+      userId: me.id,
+    });
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  findAll(me: User): Promise<Post[]> {
+    return this.postModel.findAll<Post>({ where: { userId: me.id } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  findOne(id: number, me: User) {
+    return this.postModel.findOne({
+      where: {
+        userId: me.id,
+        id,
+      },
+    });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(
+    id: number,
+    updatePostDto: UpdatePostDto,
+    me: User,
+  ): Promise<Post> {
+    const [, [updatedPost]] = await this.postModel.update<Post>(
+      { ...updatePostDto },
+      { where: { userId: me.id, id }, returning: true },
+    );
+
+    return updatedPost;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  remove(id: number, me: User) {
+    return this.postModel.destroy<Post>({ where: { userId: me.id, id } });
   }
 }

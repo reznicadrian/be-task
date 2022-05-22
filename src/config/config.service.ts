@@ -67,6 +67,7 @@ export class ConfigService {
       password: this.envConfig.DB_PASSWORD,
       database: this.envConfig.DB_NAME,
       autoLoadModels: true,
+      synchronize: true,
     };
   }
 }

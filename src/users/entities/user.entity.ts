@@ -4,8 +4,11 @@ import {
   Table,
   DataType,
   BeforeCreate,
+  HasMany,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
+import { Post } from '../../posts/entities/post.entity';
+import { BaseModel } from '../../common/sequelize/base-model';
 
 export enum UserType {
   ADMIN = 'admin',
@@ -13,15 +16,7 @@ export enum UserType {
 }
 
 @Table
-export class User extends Model {
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-    autoIncrement: true,
-  })
-  id: number;
-
+export class User extends BaseModel<User> {
   @Column({
     type: DataType.ENUM,
     values: Object.values(UserType),
@@ -46,21 +41,8 @@ export class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
 
-  @Column({
-    type: DataType.DATE,
-    field: 'created_at',
-    allowNull: false,
-    defaultValue: DataType.NOW,
-  })
-  createdAt: Date;
-
-  @Column({
-    type: DataType.DATE,
-    field: 'updated_at',
-    allowNull: false,
-    defaultValue: DataType.NOW,
-  })
-  updatedAt: Date;
+  @HasMany(() => Post)
+  posts: Post[];
 
   @BeforeCreate
   static async hashPassword(user: User) {

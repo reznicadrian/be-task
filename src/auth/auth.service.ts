@@ -22,14 +22,19 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<string> {
     const user = await this.userService.findOneByEmail(loginDto.email);
-
+    const me = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      type: user.type,
+    };
     if (!user) throw new HttpException('User does not exist', 404);
 
     const isValid = await bcrypt.compare(loginDto.password, user.password);
 
     if (!isValid) throw new UnprocessableEntityException('Invalid password');
 
-    const payload = instanceToPlain(user);
+    const payload = instanceToPlain(me);
 
     return this.jwtService.sign({ ...payload }, this.configService.jwtConfig);
   }

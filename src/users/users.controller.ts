@@ -14,7 +14,7 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { GetByIdDto } from './dto/get-by-id.dto';
+import { GetByIdDto } from '../common/dto/get-by-id.dto';
 
 @ApiTags('Users')
 @UseGuards(AdminGuard)
