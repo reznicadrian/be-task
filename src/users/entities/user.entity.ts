@@ -1,4 +1,11 @@
-import { Column, Model, Table, DataType } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  BeforeCreate,
+} from 'sequelize-typescript';
+import * as bcrypt from 'bcrypt';
 
 export enum UserType {
   ADMIN = 'admin',
@@ -54,4 +61,9 @@ export class User extends Model {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
+
+  @BeforeCreate
+  static async hashPassword(user: User) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
 }

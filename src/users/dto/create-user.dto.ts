@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
+
+import { UserType } from '../entities/user.entity';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -23,6 +26,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   readonly email: string;
+
+  @ApiProperty({
+    default: UserType.BLOGGER,
+    enum: UserType,
+  })
+  @IsEnum(UserType)
+  readonly type: UserType;
 
   @ApiProperty({
     default: '0000000',

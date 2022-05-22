@@ -3,6 +3,7 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize';
 import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
 import * as fs from 'fs';
+import { JwtSignOptions } from '@nestjs/jwt';
 
 type EnvConfig = {
   [key: string]: string;
@@ -48,6 +49,13 @@ export class ConfigService {
 
   get(key: string): string {
     return this.envConfig[key];
+  }
+
+  get jwtConfig(): JwtSignOptions {
+    return {
+      secret: this.envConfig.JWT_KEY,
+      expiresIn: 100000,
+    };
   }
 
   get postgresConfig(): SequelizeModuleOptions {
