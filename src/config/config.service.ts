@@ -33,8 +33,6 @@ export class ConfigService {
       DB_USER: Joi.string().required(),
       DB_PASSWORD: Joi.string().required(),
       DB_NAME: Joi.string().required(),
-
-      PRIVATE_KEY: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } =

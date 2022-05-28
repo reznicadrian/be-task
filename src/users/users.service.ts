@@ -5,6 +5,9 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PageOptionsDto } from '../common/pagination/page-options.dto';
+import { PageDto } from '../common/pagination/page.dto';
+import { PageMetaDto } from '../common/pagination/page-meta.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,8 +25,19 @@ export class UsersService {
     });
   }
 
-  findAll(): Promise<User[]> {
-    return this.userModel.findAll<User>();
+  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
+    const { rows, count } = await this.userModel.findAndCountAll({
+      order: [['created_at', pageOptionsDto.order]],
+      limit: pageOptionsDto.take,
+      offset: pageOptionsDto.skip,
+    });
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount: count,
+      pageOptionsDto,
+    });
+
+    return new PageDto(rows, pageMetaDto);
   }
 
   findOne(id: number): Promise<User> {

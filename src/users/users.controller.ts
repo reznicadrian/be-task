@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -16,6 +17,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetByIdDto } from '../common/dto/get-by-id.dto';
 import { User } from './entities/user.entity';
+import { PageOptionsDto } from '../common/pagination/page-options.dto';
+import { PageDto } from '../common/pagination/page.dto';
 
 @ApiTags('Users')
 @UseGuards(AdminGuard)
@@ -32,8 +35,10 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Get all users' })
   @Get()
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<User>> {
+    return await this.usersService.findAll(pageOptionsDto);
   }
 
   @ApiOperation({ summary: 'Get a user by id' })
