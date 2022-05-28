@@ -8,10 +8,12 @@ import {
   Delete,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { PostsService } from './posts.service';
+import { Post as PostEntity } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { GetByIdDto } from '../common/dto/get-by-id.dto';
@@ -19,6 +21,8 @@ import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
 import { Me } from '../common/decorators/me.decorator';
 import { User } from '../users/entities/user.entity';
 import { MyPostGuard } from '../auth/guards/my-post.guard';
+import { PageDto } from '../common/pagination/page.dto';
+import { PageOptionsDto } from '../common/pagination/page-options.dto';
 
 @ApiTags('Posts')
 @UseGuards(AuthenticatedGuard)
@@ -35,8 +39,11 @@ export class PostsController {
 
   @ApiOperation({ summary: 'Get all posts' })
   @Get()
-  findAll(@Me() me: User) {
-    return this.postsService.findAll(me);
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto,
+    @Me() me: User,
+  ): Promise<PageDto<PostEntity>> {
+    return await this.postsService.findAll(pageOptionsDto, me);
   }
 
   @ApiOperation({ summary: 'Get one post by id' })
