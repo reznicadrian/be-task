@@ -23,9 +23,9 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<string> {
     const user = await this.userService.findOneByEmail(loginDto.email);
 
-    const me = AuthService.buildUserRes(user);
-
     if (!user) throw new HttpException('User does not exist', 404);
+
+    const me = AuthService.buildUserRes(user);
 
     const isValid = await bcrypt.compare(loginDto.password, user.password);
 
