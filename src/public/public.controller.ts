@@ -1,8 +1,9 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { PostsService } from '../posts/posts.service';
 import { GetByIdDto } from '../common/dto/get-by-id.dto';
+import { PageOptionsDto } from '../common/pagination/page-options.dto';
 
 @ApiTags('Public Posts')
 @Controller('')
@@ -11,8 +12,8 @@ export class PublicController {
 
   @ApiOperation({ summary: 'Get all public posts' })
   @Get()
-  findAll() {
-    return this.postsService.findAllPublic();
+  findAll(@Query() pageOptionsDto: PageOptionsDto) {
+    return this.postsService.findAllPublic(pageOptionsDto);
   }
 
   @ApiOperation({ summary: 'Get one public post by id' })

@@ -29,7 +29,7 @@ export class MyPostGuard implements CanActivate {
 
     //@TODO: find a better solution
     if (
-      post.userId !== request.user.id ||
+      post.userId !== +request.user.id ||
       request.user.type !== UserType.BLOGGER
     ) {
       if (request.user.type === UserType.ADMIN) {

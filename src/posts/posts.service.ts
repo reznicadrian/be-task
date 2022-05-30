@@ -14,12 +14,28 @@ import { PageMetaDto } from '../common/pagination/page-meta.dto';
 export class PostsService {
   constructor(@InjectModel(Post) private postModel: typeof Post) {}
 
-  findAllPublic(): Promise<Post[]> {
-    return this.postModel.findAll<Post>({ where: { isHidden: true } });
+  async findAllPublic(pageOptionsDto: PageOptionsDto): Promise<PageDto<Post>> {
+    const { rows, count } = await this.postModel.findAndCountAll<Post>({
+      where: { isHidden: true },
+      order: [['created_at', pageOptionsDto.order]],
+      limit: pageOptionsDto.take,
+      offset: pageOptionsDto.skip,
+      include: [{ model: User, attributes: ['name'] }],
+    });
+
+    const pageMetaDto = new PageMetaDto({
+      itemCount: count,
+      pageOptionsDto,
+    });
+
+    return new PageDto(rows, pageMetaDto);
   }
 
   findOnePublic(id: number): Promise<Post> {
-    return this.postModel.findOne({ where: { id, isHidden: true } });
+    return this.postModel.findOne({
+      where: { id, isHidden: true },
+      include: [{ model: User, attributes: ['name'] }],
+    });
   }
 
   create(createPostDto: CreatePostDto, me: User): Promise<Post> {
@@ -38,6 +54,7 @@ export class PostsService {
       order: [['created_at', pageOptionsDto.order]],
       limit: pageOptionsDto.take,
       offset: pageOptionsDto.skip,
+      include: [{ model: User, attributes: ['name'] }],
     });
     const pageMetaDto = new PageMetaDto({
       itemCount: count,
@@ -52,6 +69,7 @@ export class PostsService {
       where: {
         id,
       },
+      include: [{ model: User, attributes: ['name'] }],
     });
   }
 

@@ -54,14 +54,14 @@ export class PostsController {
 
   @ApiOperation({ summary: 'Toggle one post by id (Admin, Blogger)' })
   @UseGuards(MyPostGuard)
-  @Put(':id')
+  @Patch(':id')
   togglePost(@Param() params: GetByIdDto) {
     return this.postsService.toggleHidden(params.id);
   }
 
   @ApiOperation({ summary: 'Update one post by id (Admin, Blogger)' })
   @UseGuards(MyPostGuard)
-  @Patch(':id')
+  @Put(':id')
   update(@Param() params: GetByIdDto, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(params.id, updatePostDto);
   }

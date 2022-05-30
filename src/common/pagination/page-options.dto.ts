@@ -5,7 +5,7 @@ import { Type } from 'class-transformer';
 import { OrderByTypes } from '../../types/order-by.types';
 
 export class PageOptionsDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ default: OrderByTypes.ASC, enum: OrderByTypes })
   @IsOptional()
   @IsEnum(OrderByTypes)
   readonly order: OrderByTypes.ASC;
